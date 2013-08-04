@@ -9,15 +9,18 @@ import org.testng.annotations.Test;
 public class Injections {
   private Injector injector;
 
+  private Injector testInjector;
+
   @BeforeClass
   public void guice() {
     injector = Guice.createInjector(new PresentationModule());
+    testInjector = Guice.createInjector(new TestPresentationModule());
   }
 
   @Test
   public void service() {
-    GuicedService1 service = injector.getInstance(GuicedService1.class);
-    System.out.println("service = " + service);
+    System.out.println("service = " + injector.getInstance(GuicedService1.class));
+    System.out.println("test service = " + testInjector.getInstance(GuicedService1.class));
   }
 
 }
