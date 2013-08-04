@@ -19,8 +19,7 @@ public class Injections {
 
   @Test
   public void service() {
-    System.out.println("service = " + injector.getInstance(GuicedService1.class));
-    System.out.println("test service = " + testInjector.getInstance(GuicedService1.class));
+    System.out.println("service = " + testInjector.getInstance(GuicedService1.class));
   }
 
 }
