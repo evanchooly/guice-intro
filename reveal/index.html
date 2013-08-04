@@ -85,12 +85,17 @@
                     <p class="fragment roll-in xx-small">that have dependencies</p>
                 </section>
 
+                <section data-transition="none">
+                    <h2>Whew!</h2>
+                    <!--<img src="images/Okay-Guy-Meme-Face.jpg">-->
+                </section>
+
                 <section>
                     <h2>So.  What can we do about that?</h2>
                     <p class="fragment roll-in">We can inject our dependencies!</p>
                     <p class="fragment roll-in">Right.  But what does that even mean?</p>
                     <p class="fragment roll-in">Well, it can mean a few things</p>
-                    <p class="fragment roll-in">In short, the class declares its dependencies</p>
+                    <p class="fragment roll-in">In short, the dependencies are listed explicitly</p>
                     <p class="fragment roll-in">somehow</p>
                     <p class="fragment roll-in">XML (Spring)</p>
                     <p class="fragment roll-in">Annotations (Guice and CDI)</p>
@@ -99,11 +104,21 @@
                 </section>
 
                 <section>
+                    <h2>What is Guice?</h2>
+                    <p class="fragment roll-in">Injection framework developed at Google</p>
+                    <p class="fragment roll-in">by Bob Lee  (@crazybob)</p>
+                    <p class="fragment roll-in">No relation</p>
+                    <p class="fragment roll-in">Variety of annotations</p>
+                    <p class="fragment roll-in">Extensible</p>
+                    <p class="fragment roll-in">Light weight (ish)</p>
+                </section>
+                <section>
                     <h2>Different Kinds of Injection</h2>
                     <p class="fragment roll-in">Field</p>
                     <p class="fragment roll-in">Constructor</p>
-                    <p class="fragment roll-in">com.google.inject.Inject</p>
-                    <p class="fragment roll-in smaller">( javax.inject.Inject -- CDI )</p>
+                    <p class="fragment roll-in">Assisted</p>
+                    <p class="fragment roll-in">@com.google.inject.Inject</p>
+                    <p class="fragment roll-in smaller">( @javax.inject.Inject -- CDI )</p>
                 </section>
 
                 <section>
@@ -178,7 +193,8 @@ Needy needy = injector.getInstance(Needy.class);
 				center: true,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+//				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				transition: 'none',
 
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
