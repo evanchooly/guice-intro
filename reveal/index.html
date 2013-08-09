@@ -40,21 +40,21 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
-				<section>
-					<h3>Getting Started with</h3>
+                <section>
+                    <h3>Getting Started with</h3>
                     <h1>Dependency Injection and Guice</h1>
-					<p>
-						<small>
-                            <a href="http://antwerkz.com">Justin Lee</a> /
+                    <p><small>Justin Lee
+                            <br>Member of Technical Staff <a href="http://10gen.com">@10gen</a>
+                            <br>
+                            <a href="http://antwerkz.com">http://antwerkz.com</a> /
                             <a href="http://twitter.com/evanchooly">@evanchooly</a>
                         </small>
-					</p>
-					<p>
-						<small>
-                            Member of Technical Staff <a href="http://10gen.com">@10gen</a>
+                    </p>
+                    <p>
+                        <small>
                         </small>
-					</p>
-				</section>
+                    </p>
+                </section>
 
 				<section>
 					<h2>Pedigree</h2>
@@ -64,7 +64,7 @@
                         <li>Grizzly Websockets</li>
                         <li>
                             More side projects than time
-                            <ul><li><a href="http://github.com/evanchooly">@ github</a></li></ul>
+                            <ul><li><a href="http://github.com/evanchooly">http://github.com/evanchooly</a></li></ul>
                         </li>
                         <li class="fragment roll-in">but enough of that</li>
                     </ul>
@@ -95,7 +95,7 @@
                     <p class="fragment roll-in">We can inject our dependencies!</p>
                     <p class="fragment roll-in">Right.  But what does that even mean?</p>
                     <p class="fragment roll-in">Well, it can mean a few things</p>
-                    <p class="fragment roll-in">In short, the dependencies are listed explicitly</p>
+                    <p class="fragment roll-in">In short, the dependencies are declared explicitly</p>
                     <p class="fragment roll-in">somehow</p>
                     <p class="fragment roll-in">XML (Spring)</p>
                     <p class="fragment roll-in">Annotations (Guice and CDI)</p>
@@ -107,11 +107,12 @@
                     <h2>What is Guice?</h2>
                     <p class="fragment roll-in">Injection framework developed at Google</p>
                     <p class="fragment roll-in">by Bob Lee  (@crazybob)</p>
-                    <p class="fragment roll-in">No relation</p>
+                    <p class="fragment roll-in"><small><em>(No relation)</em></small></p>
                     <p class="fragment roll-in">Variety of annotations</p>
                     <p class="fragment roll-in">Extensible</p>
                     <p class="fragment roll-in">Light weight (ish)</p>
                 </section>
+
                 <section>
                     <h2>Different Kinds of Injection</h2>
                     <p class="fragment roll-in">Field</p>
@@ -159,6 +160,7 @@ public class GuiceModule extends AbstractModule {
   }
 
   @Provides
+  @Singleton
   public MailService create() {
     return new MailService("mail.example.com", 1500,
         "myusername", "mypassword");
@@ -170,13 +172,111 @@ public class GuiceModule extends AbstractModule {
                 <section>
                     <h2>Putting it all together</h2>
                     <pre><code data-trim>
-Injector injector = Guice.createInjector(new GuiceModule());
-Needy needy = injector.getInstance(Needy.class);
+public static void main(String[] args) {
+  Injector injector = Guice.createInjector(new GuiceModule());
+  Needy needy = injector.getInstance(Needy.class);
+  needy.whatever();
+}
                     </code></pre>
                 </section>
 
                 <section>
-                    <h2>Enough slideware.  Let's see some code.</h2>
+                    <p>This all sounds great</p>
+                    <p class="fragment roll-in">but big deal</p>
+                    <p class="fragment roll-in">Why?</p>
+                    <h2 class="fragment roll-in">To the code!</h2>
+                </section>
+
+                <section>
+                    <h2>Providers</h2>
+                    <p class="fragment roll-in">Sometimes you need more than one</p>
+                    <p class="fragment roll-in">Thread handlers</p>
+                    <p class="fragment roll-in">Multiple connections</p>
+                    <p class="fragment roll-in">Provider&lt;<em>YourType</em>&gt;</p>
+                </section>
+
+                <section>
+                    <pre><code data-trim>
+public class Processor {
+  @Inject
+  private Provider&lt;Transformer&gt; provider;
+
+  ...
+
+  public execute(CustomerData data) {
+    provider.get().process(data);
+  }
+}</code></pre>
+                </section>
+
+                <section>
+                    <pre><code data-trim>
+public class Processor {
+  @Inject
+  private Injector injector;
+
+  ...
+
+  public execute(CustomerData data) {
+    injector.getInstance(Transformer.class).process(data);
+  }
+}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Factories</h2>
+                    <p class="fragment roll-in">Assisted Injections</p>
+                    <p class="fragment roll-in">Hybrids between straight injection and providers</p>
+                    <p class="fragment roll-in">Factory interface</p>
+                </section>
+
+                <section>
+                    <h2>Static Injections</h2>
+                    <p class="fragment roll-in">smelly</p>
+                    <p class="fragment roll-in">statics are unnecessary in a DI world</p>
+                    <p class="fragment roll-in">Can not dynamically vary by environment</p>
+                    <p class="fragment roll-in">A good intermediate step</p>
+                </section>
+                <section>
+                    <h2>Static Injections</h2>
+                    <pre><code data-trim>
+public class MyModule extends AbstractModule {
+  @Override
+  protected void configure() {
+    binder().requestStaticInjection(MyUtil.class);
+  }
+}
+
+public class MyUtil {
+  @Inject
+  private static MailService service;
+
+  public static void alert() {
+    service.sendAlert();
+  }
+}
+
+...
+
+MyUtil.alert();
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Getting Started with</h3>
+                    <h1>Dependency Injection and Guice</h1>
+                    <p><small>Justin Lee
+                            <br>Member of Technical Staff <a href="http://10gen.com">@10gen</a>
+                            <br>
+                            <a href="http://antwerkz.com">http://antwerkz.com</a> /
+                            <a href="http://twitter.com/evanchooly">@evanchooly</a>
+                            <br><a href="http://github.com/evanchooly">http://github.com/evanchooly</a>
+                        </small>
+                    </p>
+                    <p>
+                        <small>
+                        </small>
+                    </p>
                 </section>
 			</div>
 
