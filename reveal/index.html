@@ -43,8 +43,10 @@
                 <section>
                     <h3>Getting Started with</h3>
                     <h1>Dependency Injection and Guice</h1>
-                    <p><small>Justin Lee
-                            <br>Member of Technical Staff <a href="http://10gen.com">@10gen</a>
+
+                    <p>
+                        <small>Justin Lee
+                            <br>Member of Technical Staff @ <a href="http://mongodb.com">mongodb.com</a>
                             <br>
                             <a href="http://antwerkz.com">http://antwerkz.com</a> /
                             <a href="http://twitter.com/evanchooly">@evanchooly</a>
@@ -59,7 +61,7 @@
 				<section>
 					<h2>Pedigree</h2>
 					<ul>
-                        <li>JVM mongodb drivers team at 10Gen (morphia)</li>
+                        <li>JVM mongodb drivers team at MongoDB (morphia)</li>
                         <li>JSR 356 Expert Group Member</li>
                         <li>Grizzly Websockets</li>
                         <li>
@@ -81,8 +83,6 @@
                     <p class="fragment roll-in">that have dependencies</p>
                     <p class="fragment roll-in smaller">that have dependencies</p>
                     <p class="fragment roll-in small">that have dependencies</p>
-                    <p class="fragment roll-in x-small">that have dependencies</p>
-                    <p class="fragment roll-in xx-small">that have dependencies</p>
                 </section>
 
                 <section data-transition="none">
@@ -97,6 +97,7 @@
                     <p class="fragment roll-in">Well, it can mean a few things</p>
                     <p class="fragment roll-in">In short, the dependencies are declared explicitly</p>
                     <p class="fragment roll-in">somehow</p>
+                    <p class="fragment roll-in">and the dependencies are given to the class</p>
                     <p class="fragment roll-in">XML (Spring)</p>
                     <p class="fragment roll-in">Annotations (Guice and CDI)</p>
                     <p class="fragment roll-in">We're gonna focus on guice</p>
@@ -105,8 +106,8 @@
 
                 <section>
                     <h2>What is Guice?</h2>
-                    <p class="fragment roll-in">Injection framework developed at Google</p>
-                    <p class="fragment roll-in">by Bob Lee  (@crazybob)</p>
+                    <p class="fragment roll-in">Injection framework developed at Google
+                        <br/>by Bob Lee  (@crazybob)</p>
                     <p class="fragment roll-in"><small><em>(No relation)</em></small></p>
                     <p class="fragment roll-in">Variety of annotations</p>
                     <p class="fragment roll-in">Extensible</p>
@@ -117,7 +118,9 @@
                     <h2>Different Kinds of Injection</h2>
                     <p class="fragment roll-in">Field</p>
                     <p class="fragment roll-in">Constructor</p>
-                    <p class="fragment roll-in">Assisted</p>
+                    <p class="fragment roll-in">Method</p>
+                    <p class="fragment roll-in">@Assisted</p>
+                    <p class="fragment roll-in">@Named</p>
                     <p class="fragment roll-in">@com.google.inject.Inject</p>
                     <p class="fragment roll-in smaller">( @javax.inject.Inject -- CDI )</p>
                 </section>
@@ -130,6 +133,22 @@ public class Needy {
     private MailService mailer;
     @Inject
     private Invoice invoice;
+
+    ...
+}
+                        </code></pre>
+                </section>
+
+                <section>
+                    <h2>Field Injection</h2>
+                        <pre><code data-trim>
+public class Needy {
+    @Inject
+    private MailService mailer;
+    @Inject(optional = true)
+    private Invoice invoice;
+
+    ...
 }
                         </code></pre>
                 </section>
@@ -146,6 +165,25 @@ public class Needy {
         this.mailer = mailer;
         this.invoice = invoice;
     }
+
+    ...
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Method and Named Injection</h2>
+                    <pre><code data-trim>
+public class TwitterAnalyzer {
+    private String apiKey;
+
+    @Inject
+    public setApiKey(
+      @Named("twitterKey") String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    ...
 }
                     </code></pre>
                 </section>
@@ -189,10 +227,12 @@ public static void main(String[] args) {
 
                 <section>
                     <h2>Providers</h2>
-                    <p class="fragment roll-in">Sometimes you need more than one</p>
+                    <p class="fragment roll-in">Sometimes you need more than one instance</p>
                     <p class="fragment roll-in">Thread handlers</p>
                     <p class="fragment roll-in">Multiple connections</p>
-                    <p class="fragment roll-in">Provider&lt;<em>YourType</em>&gt;</p>
+                    <pre class="fragment roll-in"><code data-trim>
+                        @Inject Provider&lt;YourType&gt; provider;
+                    </code></pre>
                 </section>
 
                 <section>
@@ -226,8 +266,12 @@ public class Processor {
                 <section>
                     <h2>Factories</h2>
                     <p class="fragment roll-in">Assisted Injections</p>
-                    <p class="fragment roll-in">Hybrids between straight injection and providers</p>
+                    <p class="fragment roll-in">Hybrids between injection and traditional factories</p>
                     <p class="fragment roll-in">Factory interface</p>
+                </section>
+
+                <section>
+                    <h2>Code</h2>
                 </section>
 
                 <section>
@@ -236,6 +280,7 @@ public class Processor {
                     <p class="fragment roll-in">statics are unnecessary in a DI world</p>
                     <p class="fragment roll-in">Can not dynamically vary by environment</p>
                     <p class="fragment roll-in">A good intermediate step</p>
+                    <p class="fragment roll-in">https://code.google.com/p/google-guice/wiki/AvoidStaticState</p>
                 </section>
                 <section>
                     <h2>Static Injections</h2>
@@ -263,10 +308,45 @@ MyUtil.alert();
                 </section>
 
                 <section>
+                    <h2>Testing</h2>
+                    <p class="fragment roll-in">Biggest win for DI</p>
+                    <p class="fragment roll-in">Vary by deployment environment</p>
+                    <p class="fragment roll-in">dev, staging, production</p>
+                    <p class="fragment roll-in">unit testing</p>
+                    <p class="fragment roll-in">integration testing</p>
+                    <p class="fragment roll-in smaller">(continuous integration)</p>
+                    <p class="fragment roll-in">Different modules</p>
+                </section>
+
+                <section>
+                    <h2>Testng</h2>
+                    <pre><code data-trim>
+@Guice(modules = {ModuleA.class, ModuleB.class})
+public class BaseTest {
+   @Provides
+   public Foo {
+     // environment check
+   }
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Recap</h2>
+                    <p class="fragment">Centralize construction</p>
+                    <p class="fragment">Minimize impact of code changes</p>
+                    <p class="fragment">Easy substitution of implementations</p>
+                    <p class="fragment">Environmental based configurations</p>
+                    <p class="fragment">Testing</p>
+                </section>
+
+                <section>
                     <h3>Getting Started with</h3>
                     <h1>Dependency Injection and Guice</h1>
-                    <p><small>Justin Lee
-                            <br>Member of Technical Staff <a href="http://10gen.com">@10gen</a>
+
+                    <p>
+                        <small>Justin Lee
+                            <br>Member of Technical Staff @ <a href="http://mongodb.com">mongodb.com</a>
                             <br>
                             <a href="http://antwerkz.com">http://antwerkz.com</a> /
                             <a href="http://twitter.com/evanchooly">@evanchooly</a>
