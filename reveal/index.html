@@ -58,6 +58,7 @@
                     </p>
                 </section>
 
+<!--
 				<section>
 					<h2>Pedigree</h2>
 					<ul>
@@ -71,6 +72,7 @@
                         <li class="fragment roll-in">but enough of that</li>
                     </ul>
 				</section>
+-->
 
                 <section>
                     <h2>So.  Injection.</h2>
@@ -249,6 +251,9 @@ public class Processor {
                 </section>
 
                 <section>
+                    <h2>On Demand Injections</h2>
+                    <p>Loading external class definitions</p>
+                    <p>SPI</p>
                     <pre><code data-trim>
 public class Processor {
   @Inject
@@ -267,7 +272,64 @@ public class Processor {
                     <p class="fragment roll-in">Assisted Injections</p>
                     <p class="fragment roll-in">Hybrids between injection and traditional factories</p>
                     <p class="fragment roll-in">Factory interface</p>
+                    <p class="fragment roll-in">Let's borrow an example from Cedric<br/><span class="smaller">http://beust.com/weblog/2012/08/21/advanced-dependency-injection-with-guice/</span></p>
                 </section>
+
+                <section>
+                    <pre><code data-trim>
+public class Person {
+  // Fields omitted
+
+  public Person(String name, Address address, GeoService gs) {
+    this.name = name;
+    this.address = address;
+    this.geoService = gs;
+  }
+
+  public boolean livesNear(Person otherPerson) {
+    return geoService.isNear(address, otherPerson.getAddress(),
+        2 /* miles */);
+  }
+}
+</code></pre>
+                </section>
+                <section>
+                    <pre><code data-trim>
+public interface PersonFactory {
+  Person create(String name, Address address);
+}
+
+------
+
+@Inject
+public Person(@Assisted String name,
+    @Assisted Address address, GeoService geoService) {
+  this.name = name;
+  this.address = address;
+  this.geoService = geoService;
+}
+
+</code></pre> </section>
+
+                <section>
+                    <pre><code data-trim>
+public class MyModule extends AbstractModule {
+  @Override
+  protected void configure() {
+    install(new FactoryModuleBuilder()
+        .build(PersonFactory.class));
+  }
+}
+
+---------
+
+private PersonFactory personFactory;
+
+// ...
+
+Person p = personFactory.create("Bob",
+    new Address("1 Ocean st"));
+</code></pre> </section>
 
                 <section>
                     <h2>Code</h2>
@@ -322,10 +384,14 @@ MyUtil.alert();
                     <pre><code data-trim>
 @Guice(modules = {ModuleA.class, ModuleB.class})
 public class BaseTest {
-   @Provides
-   public Foo {
-     // environment check
-   }
+   @Inject
+   private Foo;
+}
+
+public class ModuleA {
+    @Provides
+    public Foo foo() {
+    }
 }
                     </code></pre>
                 </section>
